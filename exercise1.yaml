@@ -1,0 +1,28 @@
+---
+- name: Setup Webserver
+  host: web_server_grp
+  become: yes
+  tasks:
+    - name: Install Httpd server
+      yum:
+        name: httpd
+        state: present
+    - name: Start Httpd server
+      service:
+        name: httpd
+        state: started
+        enable: yes
+
+- name: Setup DBserver
+  host: DB_server_grp
+  become: yes
+  tasks:
+    - name: Install DB server
+      yum:
+        name: mariadb-server
+        state: present
+    - name: Start and enable server
+      service:
+        name: mariadb
+        state: started
+        enable: yes

@@ -1,0 +1,54 @@
+---
+- name: Setup Webserver
+  hosts: web_server_grp
+  become: yes
+  tasks:
+    - name: Install Apache2 server
+      apt:
+        name: apache2
+        state: present
+    - name: Start Httpd server
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+    - name: Deploy web file
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+
+- name: Setup DBserver
+  hosts: db_server_grp
+  become: yes
+  tasks:
+
+    - name: Install MySQL server
+      shell: apt-get -y install mysql-server
+
+    - name: Install MySQL client
+      shell: apt-get -y install mysql-client
+
+  #  - name: Install MYSQL Python
+   #   apt:
+    #    name: python3-pymysql
+     #   state: started       
+
+    - name: Start and enable server
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Create a new database with name 'accounts'
+      mysql_db:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: accounts
+        state: present
+
+    - name: Create database user with name 'bob' and password '12345' with all database privileges
+      mysql_user:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: admin
+        password: 12345
+        priv: '*.*:ALL'
+        state: present

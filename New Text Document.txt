@@ -1,1 +1,3 @@
-hello world
+ANsible AdHoc Command
+
+ansible -i inventory -m apt -a "name=httpd state=present" web01 --become
