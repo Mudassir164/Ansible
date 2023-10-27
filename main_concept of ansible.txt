@@ -1,0 +1,40 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+update command for ansible
+update_cache: yes
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible varible priority
+
+playbook => host_vars/hostname => goup_vars/groupname => all
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Supper Seeds Variable: This Varible is used when we give value to the variable using cli
+
+ansible-playbook -e USRNM=cli_user -e COMM=cli  vars_precedence.yaml
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Gather Fact Variable: It is the varible which store the information of System
+
+ansible -m setup web01
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+condition in ansible
+ - name: Install Apache2 server
+      apt:
+        name: apache2
+        state: present
+      when: ansible_distribution == "CentOS"
+    - name: Start Httpd server
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+      when: ansible_distribution == "ubuntu"
+
+link: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_conditionals.html
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible Loop
+
+link: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html

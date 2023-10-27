@@ -1,0 +1,42 @@
+- hosts: localhost
+  gather_facts: False
+  tasks:
+    - name: Create Key Pair
+      ec2_key:
+        name: ansible_key_pair_2
+        region: ap-southeast-2
+      register: keyout
+
+    - name: Save key
+      copy:
+        content: "{{ keyout.key.private_key }}"
+        dest: ./ansible_key_pair_2.pem
+      when: keyout.changed == True
+
+
+#############  ec2 instance creation
+
+    - ec2_instance:
+        key_name: ansible_key_pair_2
+        region: ap-southeast-2
+        instance_type: t2.micro
+        image: ami-03b197fe5e3d4466a
+        wait: yes
+        exact_count: 1
+#        assign_public_ip: yes
+        instance_tags:
+          db: postgres
+        count_tag:
+          db: postgres
+
+
+    - name: Terminate EC2 instance
+      ec2_instance:
+        region: ap-southeast-2
+        instance_ids: i-0864e8922073027d6  # Replace with the actual instance ID(s) you want to terminate.
+        state: absent
+      register: ec2_termination
+
+    - name: Show termination results
+      debug:
+        var: ec2_termination
